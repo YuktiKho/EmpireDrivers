@@ -30,9 +30,9 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 DB_SETTINGS = {
     'dbname': 'empire_drivers',
-    'user': 'postgres',
-    'password': '0996',
-    'host': 'localhost',
+    'user': 'empire_drivers_user',
+    'password': 'ZnNWzzRwrZrKBdQsS8NE9MLDIvGYXS21',
+    'host': 'dpg-cscg9pl6l47c73e0qkcg-a',
     'port': '5432'
 }
 
