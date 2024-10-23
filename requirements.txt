@@ -6,7 +6,6 @@ psycopg2-binary==2.9.9
 reportlab==4.0.4
 Werkzeug==3.0.1
 WTForms==3.0.1
-smtplib3==1.0.1
 sqlalchemy==2.0.0
 validators==2.1.0
 smtp-py==2.0.
