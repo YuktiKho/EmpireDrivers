@@ -101,6 +101,11 @@ def clean_and_import_data(df):
     conn.close()
 
 
+@app.route('/')
+def home():
+    return redirect(url_for('upload_file'))
+
+
 # Route to upload and process the Excel file
 @app.route('/upload', methods=['GET', 'POST'])
 def upload_file():
