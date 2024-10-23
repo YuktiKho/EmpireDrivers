@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Filter Rides</title>
+    <link rel="icon" href="{{ url_for('static', filename='logo.png') }}" type="image/x-icon">
+    <style>
+        body{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 70vh;
+            margin: 0;
+            background-color: #f0f0f0; /* Optional background color */
+        }
+
+        
+        .box{
+            background-color: #C1DFF0;
+            text-align: center;
+            border: 2px solid black;
+            width: 700px; /* Set a fixed width for the box */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Optional shadow for better appearance */
+            border-radius: 10px; /* Optional rounded corners */
+
+        }
+        .box h1{
+            background-color: #3587A4;
+            margin-top: 0px;
+            padding: 10px;
+            color: white;
+            border-top-left-radius:9px;
+            border-top-right-radius:9px;
+        }
+
+        label{
+            font-size: 20px;
+        }
+
+        input, select{
+            font-size: 18px;
+            margin-left: 10px;
+        }
+
+        .btn{
+            padding: 10px;
+            margin-top: 25px;
+            margin-bottom: 25px;
+            font-size: 18px;
+            color: black;
+            border-radius: 10px;
+            color: white;
+            background-color: #3587A4;
+            cursor: pointer;
+
+        }
+        .btn:hover{
+            background-color: black;
+            color: white;
+        }
+
+
+
+    </style>
+</head>
+<body>
+    <div class="box">
+        <h1>Generate Pay Slip</h1>
+    <form method="POST" action="{{ url_for('filter_rides') }}">
+        <label for="driver_name">Select Driver:</label>
+        <select name="driver_name">
+            {% for name in driver_names %}
+            <option value="{{ name }}">{{ name }}</option>
+            {% endfor %}
+        </select>
+
+        <br><br>
+
+        <label for="date_from">From Date:</label>
+        <input type="date" name="date_from" required>
+
+        <br><br>
+
+        <label for="date_to">To Date:</label>
+        <input type="date" name="date_to" required>
+
+        <br><br>
+
+        <input type="submit" value="Generate Pay Slip" class="btn">
+    </form></div>
+</body>
+</html>

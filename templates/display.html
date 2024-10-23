@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Driver Pay Slip</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="icon" href="{{ url_for('static', filename='logo.png') }}" type="image/x-icon">
+    <style>
+        body {
+            padding: 20px;
+        }
+        /* Flex container for logo and company name */
+        .header-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo img {
+            height: 200px;
+            width: 400px;
+        }
+
+        .company-heading {
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .company-name{
+            font-size: 30px;
+            padding-bottom: 0px;
+            margin-bottom: 0px;
+            text-decoration: underline;
+
+
+        }
+
+
+        .summary-table {
+            background-color: #C1DFF0; 
+        }
+
+        .summary-table table{
+            border: none;
+        }
+
+        .summary-table td, th {
+            border: 2px solid #3587A4;
+        }
+
+        .summary-header {
+            padding: 10px;
+            margin-bottom: 0px;
+        }
+
+        .details-table {
+            background-color: #C1DFF0;
+        }
+
+        .table-header {
+            background-color: #3587A4;
+            color: white;
+            padding: 10px;
+            margin-bottom: 0px;
+            text-align: center;
+        }
+
+        .details-table th {
+            padding: 5px;
+            border: 2px solid #3587A4;
+        }
+
+        .details-table td {
+            border: 2px solid #3587A4;
+        }
+
+        .summary-header {
+            background-color: #3587A4;
+            color: white;
+            text-align: center;
+        }
+
+        .total-row {
+            font-weight: bold;
+            background-color: #4ea1bf;
+        }
+
+        td, th {
+            text-align: center;
+        }
+
+        .btn {
+            border: 3px solid black;
+            background-color: #C1DFF0;
+            border-radius: 10px;
+            margin: 10px;
+        }
+
+        .btn:hover {
+            border: 3px solid black;
+            background-color: #011d2d;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Company Logo and Name -->
+    <div class="header-container">
+        <!-- Logo on the left -->
+        <div class="logo">
+            <img src="{{ url_for('static', filename='image.png') }}" alt="Company Logo">
+        </div>
+
+        <!-- Company name on the right -->
+        <div class="company-heading">
+            <p class="company-name">Giant Transport Group LLC</p>
+            {{ driver_name }} <br>
+            Cashiering Date: {{ date_from.strftime('%m-%d-%Y') }} to {{ date_to.strftime('%m-%d-%Y') }}
+            
+        </div>
+    </div>
+
+    <!-- Summary Section -->
+    <div class="summary-table mt-4">
+        <h5 class="summary-header">Summary</h5>
+        <table class="table">
+            <tr>
+                <th>Name</th>
+                <th>Active Between</th>
+                <th>Days</th>
+                <th>Total Runs</th>
+                <th>Total Miles</th>
+                <th>Net Pay</th>
+            </tr>
+            <tr>
+                <td>{{ driver_name }}</td>
+                <td>{{ date_from.strftime('%m-%d-%Y') }} to {{ date_to.strftime('%m-%d-%Y') }}</td>
+                <td>{{ days }}</td>
+                <td>{{ run }}</td>
+                <td>{{ total_miles }}</td>
+                <td>${{ total_net_pay }}</td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- Details Section -->
+    <div class="details-table mt-4">
+        <h5 class="table-header">Details</h5>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Date</th>
+                    <th>Number of Runs</th>
+                    <th>Total Miles</th>
+                    <th>Net Pay</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ride in data %}
+                <tr>
+                    <td>{{ driver_name }}</td>
+                    <td>{{ ride['trip_date']|format_date('%B %d, %Y') }}</td>
+                    <td>{{ ride['runs'] }}</td>
+                    <td>{{ ride['miles'] }}</td>
+                    <td>${{ ride['net_pay'] }}</td>
+                </tr>
+                {% endfor %}
+                <tr class="total-row">
+                    <td></td>
+                    <td>Total:</td>
+                    <td>{{ run }}</td>
+                    <td>{{ total_miles }}</td>
+                    <td>${{ total_net_pay }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Download PDF Button -->
+    <div class="d-flex justify-content-center mt-4">
+        <!-- Download PDF Button -->
+        <form action="{{ url_for('download_pdf') }}" method="POST">
+            <input type="hidden" name="driver_name" value="{{ request.form.driver_name }}">
+            <input type="hidden" name="date_from" value="{{ request.form.date_from }}">
+            <input type="hidden" name="date_to" value="{{ request.form.date_to }}">
+            <input type="submit" class="btn" value="Download PDF">
+        </form>
+
+        <!-- Send Email Button -->
+        <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#emailModal">
+            Send Email
+        </button>
+    
+        <!-- Back Button to Find Another Driver -->
+        <a href="{{ url_for('filter_rides') }}" class="btn">Find Another Driver</a>
+    </div>
+
+
+    <!-- Email Modal -->
+    <div class="modal fade" id="emailModal" tabindex="-1" aria-labelledby="emailModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="emailModalLabel">Send Payslip via Email</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="emailForm" method="POST" action="{{ url_for('send_email') }}">
+                        <div class="mb-3">
+                            <label for="recipient-email" class="form-label">Recipient's Email</label>
+                            <input type="email" class="form-control" id="recipient-email" name="email" required>
+                        </div>
+                        <input type="hidden" name="driver_name" value="{{ request.form.driver_name }}">
+                        <input type="hidden" name="date_from" value="{{ request.form.date_from }}">
+                        <input type="hidden" name="date_to" value="{{ request.form.date_to }}">
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" form="emailForm" class="btn">Send Email</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Include Bootstrap JS for modal functionality -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+
+</body>
+</html>
