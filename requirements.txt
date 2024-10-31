@@ -10,4 +10,4 @@ sqlalchemy>=2.0.16
 validators==0.20.0
 gunicorn==20.1.0
 openpyxl==3.1.2
-
+pymongo==4.10.1  # replace with your desired version
